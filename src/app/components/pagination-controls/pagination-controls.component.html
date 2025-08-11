@@ -1,7 +1,5 @@
 <div class="pagination">
-  <button mat-button (click)="goFirst()" [disabled]="!canPrev">First</button>
-  <button mat-button (click)="goPrev()" [disabled]="!canPrev">Prev</button>
+  <button mat-flat-button color="primary" (click)="goPrev()" [disabled]="!canPrev">Prev</button>
   <span>Page {{ pageIndex + 1 }} / {{ totalPages }}</span>
-  <button mat-button (click)="goNext()" [disabled]="!canNext">Next</button>
-  <button mat-button (click)="goLast()" [disabled]="!canNext">Last</button>
+  <button mat-flat-button color="primary" (click)="goNext()" [disabled]="!canNext">Next</button>
 </div>

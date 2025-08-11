@@ -13,6 +13,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { trigger, transition, style, animate, query, stagger } from '@angular/animations';
 
 @Component({
   selector: 'app-reports',
@@ -32,7 +33,17 @@ import { MatIconModule } from '@angular/material/icon';
     PaginationControlsComponent,
   ],
   templateUrl: './reports.component.html',
-  styleUrls: ['./reports.component.scss'] // corrected styleUrl to styleUrls
+  styleUrls: ['./reports.component.scss'],
+  animations: [
+    trigger('listAnimation', [
+      transition('* <=> *', [
+        query(':enter',
+          [style({ opacity: 0, transform: 'translateY(-20px)' }), stagger('50ms', animate('500ms ease-out', style({ opacity: 1, transform: 'translateY(0)' })))],
+          { optional: true }
+        )
+      ])
+    ])
+  ] 
 })
 export class ReportsComponent {
   loading = true;
@@ -45,15 +56,13 @@ export class ReportsComponent {
   searchTerm = '';
   type: 'All' | TransactionType = 'All';
 
-  activeSort: string = 'date-desc';
-  sortOptions: { value: string; viewValue: string }[] = [
-    { value: 'date-desc', viewValue: 'Date: Newest First' },
-    { value: 'date-asc', viewValue: 'Date: Oldest First' },
-    { value: 'amount-desc', viewValue: 'Amount: High to Low' },
-    { value: 'amount-asc', viewValue: 'Amount: Low to High' },
-    { value: 'accountName-asc', viewValue: 'Account Name: A-Z' },
-    { value: 'accountName-desc', viewValue: 'Account Name: Z-A' },
+  sortOptions = [
+    { value: 'amount-desc', viewValue: 'Highest Amount', icon: 'attach_money' },
+    { value: 'amount-asc', viewValue: 'Lowest Amount', icon: 'attach_money' }
   ];
+  activeSort = 'date-desc';
+  activeSortLabel = 'Newest First';
+  activeSortIcon = 'update';
 
   pageIndex = 0;
   pageSize = 10;
@@ -80,15 +89,15 @@ export class ReportsComponent {
   }
 
   onSearch(term: string) {
-    this.searchTerm = term.trim().toLowerCase();
-    this.pageIndex = 0;
+    this.searchTerm = term;
     this.applyFilters();
+    this.applySorting();
   }
 
   onTypeChange(type: 'All' | TransactionType) {
     this.type = type;
-    this.pageIndex = 0;
     this.applyFilters();
+    this.applySorting();
   }
 
   onPageChange(index: number) {
@@ -96,13 +105,73 @@ export class ReportsComponent {
     this.slicePage();
   }
 
-  get activeSortLabel(): string {
-    return this.sortOptions.find(o => o.value === this.activeSort)?.viewValue || 'Sort by';
+  // Method to apply sorting based on active sort option
+  private applySorting() {
+    if (!this.filtered) return;
+
+    const [field, direction] = this.activeSort.split('-');
+    const isDesc = direction === 'desc';
+
+    this.filtered = [...this.filtered].sort((a, b) => {
+      let valueA, valueB;
+
+      if (field === 'date') {
+        valueA = new Date(a.date).getTime();
+        valueB = new Date(b.date).getTime();
+      } else if (field === 'amount') {
+        valueA = a.amount;
+        valueB = b.amount;
+      } else {
+        return 0;
+      }
+
+      if (valueA < valueB) {
+        return isDesc ? 1 : -1;
+      }
+      if (valueA > valueB) {
+        return isDesc ? -1 : 1;
+      }
+      return 0;
+    });
+
+    this.slicePage();
   }
 
-  onSortChange(sortValue: string) {
-    this.activeSort = sortValue;
+  onSortChange(sortBy: string) {
+    this.activeSort = sortBy;
+    const selectedOption = this.sortOptions.find(option => option.value === sortBy);
+    if (selectedOption) {
+      this.activeSortLabel = selectedOption.viewValue;
+      this.activeSortIcon = selectedOption.icon;
+    }
+    this.applySorting();
+  }
+
+  clearFilters() {
+    this.searchTerm = '';
+    this.type = 'All';
+    this.activeSort = 'date-desc';
+    this.activeSortLabel = 'Newest First';
+    this.activeSortIcon = 'update';
+    this.pageIndex = 0;
     this.applyFilters();
+  }
+
+  loadTransactions() {
+    this.loading = true;
+    this.error = null;
+    this.txService.getTransactions().subscribe({
+      next: (data) => {
+        this.all = data;
+        this.applyFilters();
+        this.loading = false;
+      },
+      error: (err) => {
+        this.error = 'Failed to load transactions. Please try again.';
+        console.error('Error loading transactions:', err);
+        this.loading = false;
+      }
+    });
   }
 
   private applyFilters() {
@@ -143,5 +212,18 @@ export class ReportsComponent {
     const start = this.pageIndex * this.pageSize;
     const end = start + this.pageSize;
     this.pageItems = this.filtered.slice(start, end);
+    this.updateSummaryStats();
+  }
+
+  totalCredit = 0;
+  totalDebit = 0;
+
+  private updateSummaryStats() {
+    this.totalCredit = this.filtered
+      .filter(t => t.type === 'Credit')
+      .reduce((sum, t) => sum + t.amount, 0);
+    this.totalDebit = this.filtered
+      .filter(t => t.type === 'Debit')
+      .reduce((sum, t) => sum + t.amount, 0);
   }
 }

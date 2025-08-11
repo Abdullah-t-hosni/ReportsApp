@@ -2,6 +2,7 @@ import { Component, Input, inject } from '@angular/core';
 import { CommonModule, AsyncPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
@@ -16,7 +17,8 @@ import { Transaction } from '../../models/transaction';
     DatePipe,
     DecimalPipe,
     MatTableModule,
-    MatCardModule
+    MatCardModule,
+    MatIconModule
   ],
   templateUrl: './transactions-table.component.html',
   styleUrls: ['./transactions-table.component.scss']

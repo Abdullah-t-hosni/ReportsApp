@@ -1,47 +1,116 @@
 <div class="page">
+  <div class="summary-cards-row">
+    <mat-card class="summary-card income">
+      <mat-icon>trending_up</mat-icon>
+      <div>
+        <div class="stat-value">{{ totalCredit | number:'1.2-2' }}</div>
+        <div class="stat-label">Total Income</div>
+      </div>
+    </mat-card>
+    <mat-card class="summary-card expense">
+      <mat-icon>trending_down</mat-icon>
+      <div>
+        <div class="stat-value">{{ totalDebit | number:'1.2-2' }}</div>
+        <div class="stat-label">Total Expense</div>
+      </div>
+    </mat-card>
+    <mat-card class="summary-card count">
+      <mat-icon>receipt_long</mat-icon>
+      <div>
+        <div class="stat-value">{{ filtered.length }}</div>
+        <div class="stat-label">Transactions</div>
+      </div>
+    </mat-card>
+    <mat-card class="summary-card balance">
+      <mat-icon>account_balance</mat-icon>
+      <div>
+        <div class="stat-value">{{ (totalCredit - totalDebit) | number:'1.2-2' }}</div>
+        <div class="stat-label">Balance</div>
+      </div>
+    </mat-card>
+  </div>
+  
   <mat-card class="card">
     <mat-card-header class="card-header">
-      <mat-card-title>Transactions</mat-card-title>
-      <div class="toolbar">
-        <app-search-bar (searchChange)="onSearch($event)"></app-search-bar>
-        <app-filter-dropdown (typeChange)="onTypeChange($event)"></app-filter-dropdown>
-        <button mat-stroked-button [matMenuTriggerFor]="sortMenu" class="sort-button">
-          <mat-icon>sort</mat-icon>
-          <span>{{ activeSortLabel }}</span>
-        </button>
-        <mat-menu #sortMenu="matMenu">
-          <button mat-menu-item *ngFor="let option of sortOptions" (click)="onSortChange(option.value)">
-            <span>{{ option.viewValue }}</span>
-          </button>
-        </mat-menu>
+      <div class="header-content">
+        <mat-card-title>Transactions</mat-card-title>
+        <div class="toolbar">
+          <div class="search-container">
+            <app-search-bar (searchChange)="onSearch($event)" class="search-bar"></app-search-bar>
+          </div>
+          
+          <div class="actions-container">
+            <button mat-button [matMenuTriggerFor]="filterMenu" class="filter-sort-button">
+              <mat-icon>tune</mat-icon>
+              <span>Filter & Sort</span>
+              <mat-icon class="dropdown-icon">expand_more</mat-icon>
+            </button>
+            
+            <mat-menu #filterMenu="matMenu" class="filter-menu">
+              <div class="filter-menu-header">
+                <h4>Filter & Sort</h4>
+                <button mat-icon-button (click)="clearFilters()" matTooltip="Clear all filters">
+                  <mat-icon>refresh</mat-icon>
+                </button>
+              </div>
+              
+              <mat-divider></mat-divider>
+              
+              <div class="filter-section">
+                <h5>Filter by Type</h5>
+                <app-filter-dropdown (typeChange)="onTypeChange($event)" class="filter-dropdown"></app-filter-dropdown>
+              </div>
+              
+              <div class="sort-section">
+                <h5>Sort by</h5>
+                <button mat-menu-item *ngFor="let option of sortOptions" (click)="onSortChange(option.value)">
+                  <mat-icon *ngIf="activeSort === option.value">check</mat-icon>
+                  <span>{{ option.viewValue }}</span>
+                </button>
+              </div>
+            </mat-menu>
+          </div>
+        </div>
       </div>
     </mat-card-header>
 
     <mat-divider></mat-divider>
 
     <mat-card-content>
-      <div class="state" *ngIf="loading">
-        <mat-progress-spinner mode="indeterminate" diameter="36"></mat-progress-spinner>
-        <span>Loading transactions...</span>
+      <div class="state loading" *ngIf="loading">
+        <mat-spinner [diameter]="48"></mat-spinner>
+        <div class="loading-text">Loading your transactions...</div>
       </div>
 
-      <div class="state error" *ngIf="!loading && error">
-        {{ error }}
+      <div class="state error" *ngIf="error && !loading">
+        <mat-icon>error_outline</mat-icon>
+        <h3 class="state-title">Something went wrong</h3>
+        <p class="state-description">{{ error }}</p>
+        <button mat-button (click)="loadTransactions()">
+          <mat-icon>refresh</mat-icon>
+          <span>Try Again</span>
+        </button>
       </div>
 
       <ng-container *ngIf="!loading && !error">
         <div class="state empty" *ngIf="filtered.length === 0">
-          No transactions match your search/filter.
+          <mat-icon>inbox</mat-icon>
+          <h3 class="state-title">No transactions found</h3>
+          <p class="state-description">We couldn't find any transactions matching your criteria.</p>
+          <button mat-button (click)="clearFilters()">
+            <mat-icon>refresh</mat-icon>
+            <span>Clear all filters</span>
+          </button>
         </div>
 
-        <ng-container *ngIf="filtered.length > 0">
+        <ng-container *ngIf="filtered.length > 0" [@listAnimation]="filtered.length">
           <app-transactions-table [data]="pageItems"></app-transactions-table>
           <app-pagination-controls
             [length]="filtered.length"
             [pageSize]="pageSize"
             [pageIndex]="pageIndex"
-            (pageChange)="onPageChange($event)"
-          ></app-pagination-controls>
+            (pageChange)="onPageChange($event)">
+          </app-pagination-controls>
         </ng-container>
       </ng-container>
     </mat-card-content>

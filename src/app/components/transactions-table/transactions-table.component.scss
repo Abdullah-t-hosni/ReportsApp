@@ -10,6 +10,16 @@
 table {
   min-width: 900px;
   width: 100%;
+  border-collapse: collapse; // Ensures borders are clean
+}
+
+.mat-mdc-header-row {
+  border-bottom: 1px solid rgba(0,0,0,0.12);
+}
+
+.mat-mdc-row {
+  transition: none;
+  transform-origin: center;
 }
 
 th.mat-header-cell,
@@ -25,6 +35,8 @@ td.mat-cell {
 }
 
 .transaction-card {
+  transition: none;
+
   .card-row {
     display: flex;
     justify-content: space-between;
@@ -46,9 +58,30 @@ td.mat-cell {
 .credit {
   color: #059669; // green-600
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .debit {
   color: #b91c1c; // red-700
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
+
+.type-icon {
+  font-size: 1.1em;
+  vertical-align: middle;
+  margin-inline-end: 0.2em;
+}
+
+.row-credit {
+  background: linear-gradient(90deg, #e0f7fa 0%, #e8f5e9 100%);
+}
+
+.row-debit {
+  background: linear-gradient(90deg, #ffebee 0%, #fffde7 100%);
+}
+
