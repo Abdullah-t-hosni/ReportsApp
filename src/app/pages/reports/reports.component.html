@@ -1,0 +1,49 @@
+<div class="page">
+  <mat-card class="card">
+    <mat-card-header class="card-header">
+      <mat-card-title>Transactions</mat-card-title>
+      <div class="toolbar">
+        <app-search-bar (searchChange)="onSearch($event)"></app-search-bar>
+        <app-filter-dropdown (typeChange)="onTypeChange($event)"></app-filter-dropdown>
+        <button mat-stroked-button [matMenuTriggerFor]="sortMenu" class="sort-button">
+          <mat-icon>sort</mat-icon>
+          <span>{{ activeSortLabel }}</span>
+        </button>
+        <mat-menu #sortMenu="matMenu">
+          <button mat-menu-item *ngFor="let option of sortOptions" (click)="onSortChange(option.value)">
+            <span>{{ option.viewValue }}</span>
+          </button>
+        </mat-menu>
+      </div>
+    </mat-card-header>
+
+    <mat-divider></mat-divider>
+
+    <mat-card-content>
+      <div class="state" *ngIf="loading">
+        <mat-progress-spinner mode="indeterminate" diameter="36"></mat-progress-spinner>
+        <span>Loading transactions...</span>
+      </div>
+
+      <div class="state error" *ngIf="!loading && error">
+        {{ error }}
+      </div>
+
+      <ng-container *ngIf="!loading && !error">
+        <div class="state empty" *ngIf="filtered.length === 0">
+          No transactions match your search/filter.
+        </div>
+
+        <ng-container *ngIf="filtered.length > 0">
+          <app-transactions-table [data]="pageItems"></app-transactions-table>
+          <app-pagination-controls
+            [length]="filtered.length"
+            [pageSize]="pageSize"
+            [pageIndex]="pageIndex"
+            (pageChange)="onPageChange($event)"
+          ></app-pagination-controls>
+        </ng-container>
+      </ng-container>
+    </mat-card-content>
+  </mat-card>
+</div>

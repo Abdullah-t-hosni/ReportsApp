@@ -1,0 +1,9 @@
+<mat-form-field appearance="outline">
+  <mat-icon matPrefix>filter_list</mat-icon>
+  <mat-label>Filter by Type</mat-label>
+  <mat-select [value]="selected" (selectionChange)="onChange($event.value)">
+    <mat-option [value]="'All'">All</mat-option>
+    <mat-option [value]="'Debit'">Debit</mat-option>
+    <mat-option [value]="'Credit'">Credit</mat-option>
+  </mat-select>
+  </mat-form-field>

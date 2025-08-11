@@ -1,0 +1,53 @@
+:host {
+  display: block;
+}
+
+.page {
+  padding: 1rem;
+}
+
+.card {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+.sort-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  min-height: 150px;
+}
+
+.state.empty {
+  color: #6b7280;
+}
+
+.state.error {
+  color: #b91c1c; 
+  font-weight: 500;
+}
+
+

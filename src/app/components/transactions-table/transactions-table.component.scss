@@ -1,0 +1,54 @@
+:host {
+  display: block;
+}
+
+// Desktop table view
+.table-container {
+  overflow: auto;
+}
+
+table {
+  min-width: 900px;
+  width: 100%;
+}
+
+th.mat-header-cell,
+td.mat-cell {
+  white-space: nowrap;
+}
+
+// Mobile card view
+.cards-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.transaction-card {
+  .card-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    span:first-child {
+      font-weight: 500;
+      color: #4b5563; // gray-600
+    }
+  }
+}
+
+// Common credit/debit styles
+.credit {
+  color: #059669; // green-600
+  font-weight: 500;
+}
+
+.debit {
+  color: #b91c1c; // red-700
+  font-weight: 500;
+}
