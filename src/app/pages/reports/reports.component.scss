@@ -797,7 +797,11 @@ html, body {
 
   .filter-section {
     padding: 1.5rem 1.75rem;
-    transition: none;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: rgba(248, 250, 252, 0.5);
+    }
 
     h5 {
       margin: 0 0 0.85rem;
@@ -824,7 +828,7 @@ html, body {
   .sort-section {
     padding: 1.25rem 1.75rem;
     position: relative;
-    transition: none;
+    transition: background-color 0.2s ease;
 
     &::before {
       content: '';
@@ -834,6 +838,10 @@ html, body {
       right: 1.75rem;
       height: 1px;
       background: linear-gradient(90deg, transparent, rgba(203, 213, 225, 0.6), transparent);
+    }
+
+    &:hover {
+      background-color: rgba(248, 250, 252, 0.5);
     }
   }
 
@@ -898,7 +906,6 @@ html, body {
       }
 
       /* Hover effect removed */
-      }
 
       &:active {
         transform: translateY(0) scale(0.98);
@@ -929,7 +936,7 @@ html, body {
         border-radius: 2px;
       }
     }
-
+  }
 
   .filter-dropdown {
     width: 100%;
@@ -1020,14 +1027,13 @@ html, body {
       }
 
       /* Hover effect removed */
-      }
 
       &:active {
         transform: translateX(4px) scale(0.98);
         transition-duration: 0.1s;
       }
     }
-
+  }
 
   mat-divider {
     margin: 0;
@@ -1063,12 +1069,6 @@ html, body {
       opacity: 0;
       transition: opacity 0.25s ease;
       z-index: 0;
-    }
-
-    color: #1e40af;
-
-    &::before {
-      opacity: 0.03;
     }
 
     &:active {
